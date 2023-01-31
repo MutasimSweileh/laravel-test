@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Workshop;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -11,99 +12,32 @@ use Illuminate\Support\Facades\Date;
 
 class EventsController extends BaseController
 {
-    public function getWarmupEvents() {
+    public function getWarmupEvents()
+    {
         return Event::all();
     }
 
-    /* TODO: complete getEventsWithWorkshops so that it returns all events including the workshops
-     Requirements:
-    - maximum 2 sql queries
-    - Don't post process query result in PHP
-    - verify your solution with `php artisan test`
-    - do a `git commit && git push` after you are done or when the time limit is over
+   
 
-    Hints:
-    - partial or not working answers also get graded so make sure you commit what you have
+    public function getEventsWithWorkshops()
+    {
+        $events = Event::all();
+        $workshops = Workshop::all();
+        $eventsWithWorkshops = [];
 
-    Sample response on GET /events:
-    ```json
-    [
-        {
-            "id": 1,
-            "name": "Laravel convention 2020",
-            "created_at": "2021-04-25T09:32:27.000000Z",
-            "updated_at": "2021-04-25T09:32:27.000000Z",
-            "workshops": [
-                {
-                    "id": 1,
-                    "start": "2020-02-21 10:00:00",
-                    "end": "2020-02-21 16:00:00",
-                    "event_id": 1,
-                    "name": "Illuminate your knowledge of the laravel code base",
-                    "created_at": "2021-04-25T09:32:27.000000Z",
-                    "updated_at": "2021-04-25T09:32:27.000000Z"
-                }
-            ]
-        },
-        {
-            "id": 2,
-            "name": "Laravel convention 2021",
-            "created_at": "2021-04-25T09:32:27.000000Z",
-            "updated_at": "2021-04-25T09:32:27.000000Z",
-            "workshops": [
-                {
-                    "id": 2,
-                    "start": "2021-10-21 10:00:00",
-                    "end": "2021-10-21 18:00:00",
-                    "event_id": 2,
-                    "name": "The new Eloquent - load more with less",
-                    "created_at": "2021-04-25T09:32:27.000000Z",
-                    "updated_at": "2021-04-25T09:32:27.000000Z"
-                },
-                {
-                    "id": 3,
-                    "start": "2021-11-21 09:00:00",
-                    "end": "2021-11-21 17:00:00",
-                    "event_id": 2,
-                    "name": "AutoEx - handles exceptions 100% automatic",
-                    "created_at": "2021-04-25T09:32:27.000000Z",
-                    "updated_at": "2021-04-25T09:32:27.000000Z"
-                }
-            ]
-        },
-        {
-            "id": 3,
-            "name": "React convention 2021",
-            "created_at": "2021-04-25T09:32:27.000000Z",
-            "updated_at": "2021-04-25T09:32:27.000000Z",
-            "workshops": [
-                {
-                    "id": 4,
-                    "start": "2021-08-21 10:00:00",
-                    "end": "2021-08-21 18:00:00",
-                    "event_id": 3,
-                    "name": "#NoClass pure functional programming",
-                    "created_at": "2021-04-25T09:32:27.000000Z",
-                    "updated_at": "2021-04-25T09:32:27.000000Z"
-                },
-                {
-                    "id": 5,
-                    "start": "2021-08-21 09:00:00",
-                    "end": "2021-08-21 17:00:00",
-                    "event_id": 3,
-                    "name": "Navigating the function jungle",
-                    "created_at": "2021-04-25T09:32:27.000000Z",
-                    "updated_at": "2021-04-25T09:32:27.000000Z"
-                }
-            ]
+        foreach ($events as $event) {
+            $workshopsByEvent = $workshops->where('event_id', $event->id)->all();
+            $eventWithWorkshops = [
+                'id' => $event->id,
+                'name' => $event->name,
+                'created_at' => $event->created_at,
+                'updated_at' => $event->updated_at,
+                'workshops' => array_values($workshopsByEvent)
+            ];
+            array_push($eventsWithWorkshops, $eventWithWorkshops);
         }
-    ]
-     */
-
-    public function getEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 1');
+        return $eventsWithWorkshops;
     }
-
 
     /* TODO: complete getFutureEventWithWorkshops so that it returns events with workshops, that have not yet started
     Requirements:
@@ -178,7 +112,8 @@ class EventsController extends BaseController
     ```
      */
 
-    public function getFutureEventsWithWorkshops() {
+    public function getFutureEventsWithWorkshops()
+    {
         throw new \Exception('implement in coding task 2');
     }
 }
