@@ -17,7 +17,6 @@ class EventsController extends BaseController
         return Event::all();
     }
 
-
     public function getEventsWithWorkshops()
     {
         $events = Event::all();
